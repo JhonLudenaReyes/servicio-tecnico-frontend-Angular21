@@ -8,11 +8,14 @@ import { Ciudad } from '../../../core/models/ciudad.model';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
+import { LucideAngularModule, Search } from 'lucide-angular';
 
 @Component({
   selector: 'app-ciudades',
@@ -26,7 +29,10 @@ import { TagModule } from 'primeng/tag';
     DialogModule,
     ToastModule,
     ConfirmDialogModule,
+    IconFieldModule,
+    InputIconModule,
     TagModule,
+    LucideAngularModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './ciudades.html',
@@ -41,6 +47,8 @@ export class CiudadesComponent implements OnInit {
   displayModal = signal(false);
   isEditMode = signal(false);
   loading = signal(false);
+
+  readonly Search = Search;
 
   ciudadForm: FormGroup = this.fb.group({
     idCiudad: [null],

@@ -21,19 +21,19 @@ import { SelectModule } from 'primeng/select';
   selector: 'app-equipos',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    TableModule, 
-    ButtonModule, 
-    InputTextModule, 
-    DialogModule, 
-    ToastModule, 
+    CommonModule,
+    ReactiveFormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    DialogModule,
+    ToastModule,
     ConfirmDialogModule,
     TagModule,
-    SelectModule
+    SelectModule,
   ],
   providers: [MessageService, ConfirmationService],
-  templateUrl: './equipos.html'
+  templateUrl: './equipos.html',
 })
 export class EquiposComponent implements OnInit {
   private equipoService = inject(EquipoService);
@@ -47,7 +47,7 @@ export class EquiposComponent implements OnInit {
   displayModal = signal(false);
   isEditMode = signal(false);
   loading = signal(false);
-  
+
   equipoForm: FormGroup = this.fb.group({
     idEquipo: [null],
     idTipo: [null, [Validators.required]],
@@ -60,7 +60,7 @@ export class EquiposComponent implements OnInit {
     discoDuro: [''],
     fuente: [''],
     case: [''],
-    estado: ['A', [Validators.required]]
+    estado: ['A', [Validators.required]],
   });
 
   ngOnInit(): void {
@@ -76,17 +76,22 @@ export class EquiposComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudieron cargar los equipos' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar los equipos',
+        });
         this.loading.set(false);
-      }
+      },
     });
   }
 
   loadTipos() {
     this.tipoService.getAll().subscribe({
-      next: (data) => {
-        this.tipos.set(data.filter(t => t.estado === 'A'));
-      }
+      next: (tipos) => {
+        this.tipos.set(tipos);
+        console.log(this.tipos());
+      },
     });
   }
 
@@ -107,23 +112,27 @@ export class EquiposComponent implements OnInit {
     }
 
     const equipoData = this.equipoForm.value;
-    const request = this.isEditMode() 
+    const request = this.isEditMode()
       ? this.equipoService.update(equipoData.idEquipo, equipoData)
       : this.equipoService.save(equipoData);
 
     request.subscribe({
       next: () => {
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Éxito', 
-          detail: `Equipo ${this.isEditMode() ? 'actualizado' : 'registrado'} correctamente` 
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: `Equipo ${this.isEditMode() ? 'actualizado' : 'registrado'} correctamente`,
         });
         this.displayModal.set(false);
         this.loadEquipos();
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al procesar la solicitud' });
-      }
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Ocurrió un error al procesar la solicitud',
+        });
+      },
     });
   }
 
@@ -137,19 +146,27 @@ export class EquiposComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.deleteEquipo(equipo.idEquipo!);
-      }
+      },
     });
   }
 
   private deleteEquipo(id: number) {
     this.equipoService.delete(id).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Equipo eliminado correctamente' });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Equipo eliminado correctamente',
+        });
         this.loadEquipos();
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar el equipo' });
-      }
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo eliminar el equipo',
+        });
+      },
     });
   }
 }

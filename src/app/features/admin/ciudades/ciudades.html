@@ -4,6 +4,7 @@
       <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Gestión de Ciudades</h2>
       <p class="text-slate-500 mt-1">Administra las ubicaciones disponibles en el sistema.</p>
     </div>
+
     <button
       pButton
       label="Nueva Ciudad"
@@ -13,7 +14,21 @@
     ></button>
   </div>
 
+  <div class="mb-3 flex justify-start">
+    <p-iconfield iconPosition="left">
+      <p-inputicon><lucide-angular [img]="Search" class="w-5 h-5"></lucide-angular></p-inputicon>
+      <input
+        pInputText
+        pSize="small"
+        type="text"
+        (input)="dt.filterGlobal($event.target.value, 'contains')"
+        placeholder="Keyword Search"
+      />
+    </p-iconfield>
+  </div>
+
   <p-table
+    #dt
     [value]="ciudades()"
     [loading]="loading()"
     [rows]="6"
