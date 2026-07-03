@@ -21,8 +21,8 @@
         pInputText
         pSize="small"
         type="text"
-        (input)="dt.filterGlobal($event.target.value, 'contains')"
-        placeholder="Keyword Search"
+        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+        placeholder="Buscar ciudad..."
       />
     </p-iconfield>
   </div>
@@ -35,6 +35,7 @@
     [paginator]="true"
     [responsiveLayout]="'scroll'"
     styleClass="p-datatable-sm custom-table"
+    [globalFilterFields]="['ciudad', 'idCiudad']"
   >
     <ng-template pTemplate="header">
       <tr class="bg-slate-50">

@@ -8,11 +8,14 @@ import { Tipo } from '../../../core/models/tipo.model';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
+import { LucideAngularModule, Search } from 'lucide-angular';
 
 @Component({
   selector: 'app-tipos',
@@ -27,6 +30,9 @@ import { TagModule } from 'primeng/tag';
     ToastModule,
     ConfirmDialogModule,
     TagModule,
+    IconFieldModule,
+    InputIconModule,
+    LucideAngularModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './tipos.html',
@@ -41,6 +47,8 @@ export class TiposComponent implements OnInit {
   displayModal = signal(false);
   isEditMode = signal(false);
   loading = signal(false);
+
+  readonly Search = Search;
 
   tipoForm: FormGroup = this.fb.group({
     idTipo: [null],

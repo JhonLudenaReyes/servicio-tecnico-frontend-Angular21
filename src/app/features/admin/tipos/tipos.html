@@ -15,13 +15,28 @@
     ></button>
   </div>
 
+  <div class="mb-3 flex justify-start">
+    <p-iconfield iconPosition="left">
+      <p-inputicon><lucide-angular [img]="Search" class="w-5 h-5"></lucide-angular></p-inputicon>
+      <input
+        pInputText
+        pSize="small"
+        type="text"
+        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+        placeholder="Buscar tipo..."
+      />
+    </p-iconfield>
+  </div>
+
   <p-table
+    #dt
     [value]="tipos()"
     [loading]="loading()"
     [rows]="6"
     [paginator]="true"
     [responsiveLayout]="'scroll'"
     styleClass="p-datatable-sm custom-table"
+    [globalFilterFields]="['tipo', 'idTipo']"
   >
     <ng-template pTemplate="header">
       <tr class="bg-slate-50">
