@@ -10,12 +10,15 @@ import { Tipo } from '../../core/models/tipo.model';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { SelectModule } from 'primeng/select';
+import { LucideAngularModule, Search } from 'lucide-angular';
 
 @Component({
   selector: 'app-equipos',
@@ -31,6 +34,9 @@ import { SelectModule } from 'primeng/select';
     ConfirmDialogModule,
     TagModule,
     SelectModule,
+    IconFieldModule,
+    InputIconModule,
+    LucideAngularModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './equipos.html',
@@ -47,6 +53,8 @@ export class EquiposComponent implements OnInit {
   displayModal = signal(false);
   isEditMode = signal(false);
   loading = signal(false);
+
+  readonly Search = Search;
 
   equipoForm: FormGroup = this.fb.group({
     idEquipo: [null],
