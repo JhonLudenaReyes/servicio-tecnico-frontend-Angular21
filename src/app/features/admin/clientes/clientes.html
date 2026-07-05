@@ -1,0 +1,191 @@
+<div class="card bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Gestión de Clientes</h2>
+      <p class="text-slate-500 mt-1">Administra los clientes registrados en el sistema.</p>
+    </div>
+
+    <button
+      pButton
+      label="Nuevo Cliente"
+      icon="pi pi-plus"
+      class="p-button-primary rounded-xl px-6 py-3 shadow-md transition-all hover:scale-105"
+      (click)="showDialog()"
+    ></button>
+  </div>
+
+  <div class="mb-3 flex justify-start">
+    <p-iconfield iconPosition="left">
+      <p-inputicon><lucide-angular [img]="Search" class="w-5 h-5"></lucide-angular></p-inputicon>
+      <input
+        pInputText
+        pSize="small"
+        type="text"
+        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+        placeholder="Buscar cliente..."
+      />
+    </p-iconfield>
+  </div>
+
+  <p-table
+    #dt
+    [value]="clientes()"
+    [loading]="loading()"
+    [rows]="6"
+    [paginator]="true"
+    [responsiveLayout]="'scroll'"
+    styleClass="p-datatable-sm custom-table"
+    [globalFilterFields]="[
+      'nombres',
+      'apellidos',
+      'cedula',
+      'ruc',
+      'ciudad.ciudad',
+      'direccion',
+      'celular',
+      'email',
+    ]"
+  >
+    <ng-template pTemplate="header">
+      <tr class="bg-slate-50">
+        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Cliente</th>
+        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Cédula / RUC</th>
+        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Ciudad</th>
+        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Dirección</th>
+        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Email</th>
+        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Contactos</th>
+        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs text-center">
+          Acciones
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-cliente>
+      <tr class="hover:bg-slate-50 transition-colors">
+        <td class="px-6 py-4">
+          <div class="flex flex-col">
+            <span class="text-xs text-slate-500"
+              >{{ cliente.nombres }} {{ cliente.apellidos }}</span
+            >
+          </div>
+        </td>
+        <td class="px-6 py-4">
+          <div class="flex flex-col">
+            <span class="font-bold text-slate-700">{{ cliente.cedula }}</span>
+            <span class="text-xs text-slate-500">{{ cliente.ruc }}</span>
+          </div>
+        </td>
+        <td class="px-6 py-4">
+          <p-tag
+            severity="info"
+            [value]="cliente.ciudad?.ciudad || 'N/A'"
+            class="rounded-full"
+          ></p-tag>
+        </td>
+        <td class="px-6 py-4">
+          <div class="flex flex-col">
+            <span class="text-xs text-slate-500">{{ cliente.direccion }}</span>
+          </div>
+        </td>
+        <td class="px-6 py-4 text-slate-600">{{ cliente.email }}</td>
+        <td class="px-6 py-4">
+          <div class="text-xs space-y-1">
+            @if (cliente.celular) {
+              <div><span class="font-semibold">Celular:</span> {{ cliente.celular }}</div>
+            }
+            @if (cliente.telefono) {
+              <div><span class="font-semibold">Teléfono:</span> {{ cliente.telefono }}</div>
+            }
+            @if (cliente.telefono_adicional) {
+              <div>
+                <span class="font-semibold">Adicional:</span> {{ cliente.telefono_adicional }}
+              </div>
+            }
+          </div>
+        </td>
+        <td class="px-6 py-4 text-center">
+          <div class="flex justify-center gap-2">
+            <button
+              pButton
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text p-button-warning hover:bg-amber-50"
+              (click)="showDialog(cliente)"
+              pTooltip="Editar"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-danger hover:bg-red-50"
+              (click)="confirmDelete(cliente)"
+              pTooltip="Eliminar"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" class="text-center py-8 text-slate-400">
+          No se encontraron clientes registrados.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Modal para Crear/Editar -->
+<p-dialog
+  [header]="isEditMode() ? 'Editar Cliente' : 'Nuevo Cliente'"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="custom-dialog"
+>
+  <form [formGroup]="clienteForm" (ngSubmit)="saveCliente()" class="flex flex-col gap-6 mt-4">
+    <div class="flex flex-col gap-2">
+      <label for="nombres" class="font-semibold text-slate-700">Nombres</label>
+      <input
+        id="nombres"
+        type="text"
+        pInputText
+        formControlName="nombres"
+        class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
+        placeholder="Ej. Juan"
+      />
+      @if (clienteForm.get('nombres')?.touched && clienteForm.get('nombres')?.invalid) {
+        <small class="text-red-500 font-medium ml-1">
+          @if (clienteForm.get('nombres')?.errors?.['required']) {
+            Los nombres son obligatorios.
+          }
+          @if (clienteForm.get('nombres')?.errors?.['minlength']) {
+            Debe tener al menos 3 caracteres.
+          }
+        </small>
+      }
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button
+        type="button"
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text p-button-secondary rounded-xl px-6"
+        (click)="displayModal.set(false)"
+      ></button>
+      <button
+        type="submit"
+        pButton
+        label="Guardar"
+        icon="pi pi-check"
+        class="p-button-primary rounded-xl px-8 shadow-md"
+        [disabled]="clienteForm.invalid"
+      ></button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Notificaciones y Confirmaciones -->
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

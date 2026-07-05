@@ -1,14 +1,24 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { LucideAngularModule, LayoutDashboard, ClipboardList, Users, HardDrive, Settings, LogOut, Menu, X } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  LayoutDashboard,
+  ClipboardList,
+  Users,
+  HardDrive,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+} from 'lucide-angular';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [CommonModule, RouterModule, LucideAngularModule],
   templateUrl: './main-layout.html',
-  styleUrls: []
+  styleUrls: [],
 })
 export class MainLayoutComponent {
   isSidebarOpen = true;
@@ -25,7 +35,7 @@ export class MainLayoutComponent {
   menuItems = [
     { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { label: 'Órdenes', icon: ClipboardList, path: '/orders' },
-    { label: 'Clientes', icon: Users, path: '/clients' },
+    { label: 'Clientes', icon: Users, path: '/admin/clientes' },
     { label: 'Equipos', icon: HardDrive, path: '/equipment' },
     { label: 'Ciudades', icon: Settings, path: '/admin/ciudades' },
     { label: 'Tipos Equipos', icon: Settings, path: '/admin/tipos' },
