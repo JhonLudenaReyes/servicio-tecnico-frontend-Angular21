@@ -1,8 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CiudadService } from '../../../core/services/ciudad.service';
-import { Ciudad } from '../../../core/models/ciudad.model';
 
 // PrimeNG
 import { TableModule } from 'primeng/table';
@@ -15,9 +13,14 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
+import { SelectModule } from 'primeng/select';
 import { LucideAngularModule, Search } from 'lucide-angular';
+
 import { ClienteService } from '../../../core/services/cliente.service';
+import { CiudadService } from '../../../core/services/ciudad.service';
+
 import { Cliente } from '../../../core/models/cliente.model';
+import { Ciudad } from '../../../core/models/ciudad.model';
 
 @Component({
   selector: 'app-clientes',
@@ -34,6 +37,7 @@ import { Cliente } from '../../../core/models/cliente.model';
     IconFieldModule,
     InputIconModule,
     TagModule,
+    SelectModule,
     LucideAngularModule,
   ],
   providers: [MessageService, ConfirmationService],
@@ -41,11 +45,13 @@ import { Cliente } from '../../../core/models/cliente.model';
 })
 export class ClientesComponent implements OnInit {
   private clienteService = inject(ClienteService);
+  private ciudadService = inject(CiudadService);
   private fb = inject(FormBuilder);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
 
   clientes = signal<Cliente[]>([]);
+  ciudades = signal<Ciudad[]>([]);
   displayModal = signal(false);
   isEditMode = signal(false);
   loading = signal(false);
@@ -69,6 +75,7 @@ export class ClientesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadClientes();
+    this.loadCiudades();
   }
 
   loadClientes() {
@@ -86,6 +93,15 @@ export class ClientesComponent implements OnInit {
           detail: 'No se pudieron cargar los clientes',
         });
         this.loading.set(false);
+      },
+    });
+  }
+
+  loadCiudades() {
+    this.ciudadService.getAll().subscribe({
+      next: (ciudades) => {
+        this.ciudadService.ciudades.set(ciudades);
+        console.log(this.ciudades());
       },
     });
   }

@@ -165,6 +165,19 @@
       }
     </div>
 
+    <div class="flex flex-col gap-2">
+      <label class="font-semibold text-slate-700">Ciudad</label>
+      <p-select
+        [options]="ciudades()"
+        formControlName="idCiudad"
+        optionLabel="ciudad"
+        optionValue="idCiudad"
+        placeholder="Seleccione una ciudad"
+        styleClass="w-full rounded-xl border-slate-200"
+      >
+      </p-select>
+    </div>
+
     <div class="flex justify-end gap-3 mt-6">
       <button
         type="button"
