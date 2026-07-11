@@ -11,7 +11,7 @@ export interface Cliente {
   celular: string;
   email: string;
   telefono: string;
-  telefono_adicional: any;
-  estado: string;
+  telefono_adicional: string;
+  estado?: string;
   ciudad: Ciudad;
 }

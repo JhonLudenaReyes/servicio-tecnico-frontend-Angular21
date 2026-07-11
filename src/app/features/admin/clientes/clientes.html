@@ -142,43 +142,197 @@
   [resizable]="false"
   styleClass="custom-dialog"
 >
-  <form [formGroup]="clienteForm" (ngSubmit)="saveCliente()" class="flex flex-col gap-6 mt-4">
-    <div class="flex flex-col gap-2">
-      <label for="nombres" class="font-semibold text-slate-700">Nombres</label>
-      <input
-        id="nombres"
-        type="text"
-        pInputText
-        formControlName="nombres"
-        class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
-        placeholder="Ej. Juan"
-      />
-      @if (clienteForm.get('nombres')?.touched && clienteForm.get('nombres')?.invalid) {
-        <small class="text-red-500 font-medium ml-1">
-          @if (clienteForm.get('nombres')?.errors?.['required']) {
-            Los nombres son obligatorios.
-          }
-          @if (clienteForm.get('nombres')?.errors?.['minlength']) {
-            Debe tener al menos 3 caracteres.
-          }
-        </small>
-      }
+  <form [formGroup]="clienteForm" (ngSubmit)="saveCliente()" class="mt-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Información Básica -->
+      <div class="col-span-full border-b border-slate-100 pb-2 mb-2">
+        <h3 class="text-sm font-bold text-primary-600 uppercase tracking-wider">
+          Información General
+        </h3>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="nombres" class="font-semibold text-slate-700">Nombres</label>
+        <input
+          id="nombres"
+          type="text"
+          pInputText
+          formControlName="nombres"
+          class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
+          placeholder="Ej. Juan"
+        />
+        @if (clienteForm.get('nombres')?.touched && clienteForm.get('nombres')?.invalid) {
+          <small class="text-red-500 font-medium ml-1">
+            @if (clienteForm.get('nombres')?.errors?.['required']) {
+              Los nombres son obligatorios.
+            }
+            @if (clienteForm.get('nombres')?.errors?.['minlength']) {
+              Debe tener al menos 3 caracteres.
+            }
+          </small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="apellidos" class="font-semibold text-slate-700">Apellidos</label>
+        <input
+          id="apellidos"
+          type="text"
+          pInputText
+          formControlName="apellidos"
+          class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
+          placeholder="Ej. Juan"
+        />
+        @if (clienteForm.get('apellidos')?.touched && clienteForm.get('apellidos')?.invalid) {
+          <small class="text-red-500 font-medium ml-1">
+            @if (clienteForm.get('apellidos')?.errors?.['required']) {
+              Los apellidos son obligatorios.
+            }
+            @if (clienteForm.get('apellidos')?.errors?.['minlength']) {
+              Debe tener al menos 3 caracteres.
+            }
+          </small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="cedula" class="font-semibold text-slate-700">Cédula</label>
+        <input
+          id="cedula"
+          type="text"
+          pInputText
+          formControlName="cedula"
+          class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
+          placeholder="Ej. 1234567890"
+        />
+        @if (clienteForm.get('cedula')?.touched && clienteForm.get('cedula')?.invalid) {
+          <small class="text-red-500 font-medium ml-1">
+            @if (clienteForm.get('cedula')?.errors?.['required']) {
+              La cédula es obligatoria.
+            }
+            @if (clienteForm.get('cedula')?.errors?.['minlength']) {
+              Debe tener al menos 3 caracteres.
+            }
+          </small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="ruc" class="font-semibold text-slate-700">RUC</label>
+        <input
+          id="ruc"
+          type="text"
+          pInputText
+          formControlName="ruc"
+          class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
+          placeholder="Ej. 1234567890001"
+        />
+        @if (clienteForm.get('ruc')?.touched && clienteForm.get('ruc')?.invalid) {
+          <small class="text-red-500 font-medium ml-1">
+            @if (clienteForm.get('ruc')?.errors?.['required']) {
+              El RUC es obligatorio.
+            }
+            @if (clienteForm.get('ruc')?.errors?.['minlength']) {
+              Debe tener al menos 3 caracteres.
+            }
+          </small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="font-semibold text-slate-700">Ciudad</label>
+        <p-select
+          [options]="ciudades()"
+          formControlName="idCiudad"
+          optionLabel="ciudad"
+          optionValue="idCiudad"
+          placeholder="Seleccione una ciudad"
+          styleClass="w-full rounded-xl border-slate-200"
+        >
+        </p-select>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="direccion" class="font-semibold text-slate-700">Dirección</label>
+        <input
+          id="direccion"
+          type="text"
+          pInputText
+          formControlName="direccion"
+          class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
+          placeholder="Ej. 1234567890001"
+        />
+        @if (clienteForm.get('direccion')?.touched && clienteForm.get('direccion')?.invalid) {
+          <small class="text-red-500 font-medium ml-1">
+            @if (clienteForm.get('direccion')?.errors?.['required']) {
+              La dirección es obligatoria.
+            }
+            @if (clienteForm.get('direccion')?.errors?.['minlength']) {
+              Debe tener al menos 3 caracteres.
+            }
+          </small>
+        }
+      </div>
+
+      <!-- Información de Contacto -->
+      <div class="col-span-full border-b border-slate-100 pb-2 mt-4 mb-2">
+        <h3 class="text-sm font-bold text-primary-600 uppercase tracking-wider">
+          Información de Contacto (Opcional)
+        </h3>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="celular" class="font-semibold text-slate-700 text-sm">Celular</label>
+        <input
+          id="celular"
+          type="text"
+          pInputText
+          formControlName="celular"
+          class="w-full p-2 text-sm border-slate-200 rounded-xl"
+          placeholder="Ej. 123-456-7890"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="telefono" class="font-semibold text-slate-700 text-sm">Teléfono</label>
+        <input
+          id="telefono"
+          type="text"
+          pInputText
+          formControlName="telefono"
+          class="w-full p-2 text-sm border-slate-200 rounded-xl"
+          placeholder="Ej. 042-765-4321"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="telefono_adicional" class="font-semibold text-slate-700 text-sm"
+          >Teléfono Adicional</label
+        >
+        <input
+          id="telefono_adicional"
+          type="text"
+          pInputText
+          formControlName="telefono_adicional"
+          class="w-full p-2 text-sm border-slate-200 rounded-xl"
+          placeholder="Ej. 042-468-7946"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="email" class="font-semibold text-slate-700 text-sm">Email</label>
+        <input
+          id="email"
+          type="email"
+          pInputText
+          formControlName="email"
+          class="w-full p-2 text-sm border-slate-200 rounded-xl"
+          placeholder="Ej. user@example.com"
+        />
+      </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <label class="font-semibold text-slate-700">Ciudad</label>
-      <p-select
-        [options]="ciudades()"
-        formControlName="idCiudad"
-        optionLabel="ciudad"
-        optionValue="idCiudad"
-        placeholder="Seleccione una ciudad"
-        styleClass="w-full rounded-xl border-slate-200"
-      >
-      </p-select>
-    </div>
-
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="flex justify-end gap-3 mt-8">
       <button
         type="button"
         pButton
@@ -190,7 +344,7 @@
       <button
         type="submit"
         pButton
-        label="Guardar"
+        label="Guardar Cliente"
         icon="pi pi-check"
         class="p-button-primary rounded-xl px-8 shadow-md"
         [disabled]="clienteForm.invalid"

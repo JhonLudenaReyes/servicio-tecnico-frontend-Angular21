@@ -60,7 +60,7 @@ export class ClientesComponent implements OnInit {
 
   clienteForm: FormGroup = this.fb.group({
     idPersona: [null],
-    idCiudad: [0],
+    idCiudad: [null, [Validators.required]],
     nombres: ['', [Validators.required, Validators.minLength(3)]],
     apellidos: ['', [Validators.required, Validators.minLength(3)]],
     cedula: ['', [Validators.required, Validators.minLength(3)]],
@@ -70,7 +70,6 @@ export class ClientesComponent implements OnInit {
     email: ['', [Validators.required, Validators.minLength(3)]],
     telefono: ['', [Validators.required, Validators.minLength(3)]],
     telefono_adicional: ['', [Validators.required, Validators.minLength(3)]],
-    ciudad: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   ngOnInit(): void {
@@ -101,7 +100,7 @@ export class ClientesComponent implements OnInit {
     this.ciudadService.getAll().subscribe({
       next: (ciudades) => {
         this.ciudadService.ciudades.set(ciudades);
-        console.log(this.ciudades());
+        this.ciudades.set(this.ciudadService.ciudades());
       },
     });
   }
@@ -122,7 +121,7 @@ export class ClientesComponent implements OnInit {
 
     const clienteData = this.clienteForm.value;
     const request = this.isEditMode()
-      ? this.clienteService.update(clienteData.idPersona, clienteData)
+      ? this.clienteService.update(clienteData)
       : this.clienteService.save(clienteData);
 
     request.subscribe({
