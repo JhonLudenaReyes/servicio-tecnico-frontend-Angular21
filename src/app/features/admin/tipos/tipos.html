@@ -15,126 +15,21 @@
     ></button>
   </div>
 
-  <div class="mb-3 flex justify-start">
-    <p-iconfield iconPosition="left">
-      <p-inputicon><lucide-angular [img]="Search" class="w-5 h-5"></lucide-angular></p-inputicon>
-      <input
-        pInputText
-        pSize="small"
-        type="text"
-        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-        placeholder="Buscar tipo..."
-      />
-    </p-iconfield>
-  </div>
-
-  <p-table
-    #dt
-    [value]="tipos()"
+  <app-tipo-table
+    [tipos]="tipos()"
     [loading]="loading()"
-    [rows]="6"
-    [paginator]="true"
-    [responsiveLayout]="'scroll'"
-    styleClass="p-datatable-sm custom-table"
-    [globalFilterFields]="['tipo', 'idTipo']"
-  >
-    <ng-template pTemplate="header">
-      <tr class="bg-slate-50">
-        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">ID</th>
-        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Tipo de Equipo</th>
-        <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs text-center">
-          Acciones
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-tipo>
-      <tr class="hover:bg-slate-50 transition-colors">
-        <td class="px-6 py-4 font-medium text-slate-700">{{ tipo.idTipo }}</td>
-        <td class="px-6 py-4 text-slate-600">{{ tipo.tipo }}</td>
-        <td class="px-6 py-4 text-center">
-          <div class="flex justify-center gap-2">
-            <button
-              pButton
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-text p-button-warning hover:bg-amber-50"
-              (click)="showDialog(tipo)"
-              pTooltip="Editar"
-            ></button>
-            <button
-              pButton
-              icon="pi pi-trash"
-              class="p-button-rounded p-button-text p-button-danger hover:bg-red-50"
-              (click)="confirmDelete(tipo)"
-              pTooltip="Eliminar"
-            ></button>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="4" class="text-center py-8 text-slate-400">
-          No se encontraron tipos de equipos registrados.
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+    (edit)="showDialog($event)"
+    (delete)="confirmDelete($event)"
+  ></app-tipo-table>
 </div>
 
-<!-- Modal para Crear/Editar -->
-<p-dialog
-  [header]="isEditMode() ? 'Editar Tipo de Equipo' : 'Nuevo Tipo de Equipo'"
-  [(visible)]="displayModal"
-  [modal]="true"
-  [style]="{ width: '450px' }"
-  [draggable]="false"
-  [resizable]="false"
-  styleClass="custom-dialog"
->
-  <form [formGroup]="tipoForm" (ngSubmit)="saveTipo()" class="flex flex-col gap-6 mt-4">
-    <div class="flex flex-col gap-2">
-      <label for="tipo" class="font-semibold text-slate-700">Nombre del Tipo</label>
-      <input
-        id="tipo"
-        type="text"
-        pInputText
-        formControlName="tipo"
-        class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
-        placeholder="Ej. Laptop, Servidor, Impresora"
-      />
-      @if (tipoForm.get('tipo')?.touched && tipoForm.get('tipo')?.invalid) {
-        <small class="text-red-500 font-medium ml-1">
-          @if (tipoForm.get('tipo')?.errors?.['required']) {
-            El nombre es obligatorio.
-          }
-          @if (tipoForm.get('tipo')?.errors?.['minlength']) {
-            Debe tener al menos 3 caracteres.
-          }
-        </small>
-      }
-    </div>
+<app-tipo-dialog
+  [visible]="displayModal()"
+  [tipo]="selectedTipo()"
+  (visibleChange)="onDialogVisibilityChange($event)"
+  (save)="saveTipo($event)"
+  (cancel)="onDialogCancel()"
+></app-tipo-dialog>
 
-    <div class="flex justify-end gap-3 mt-6">
-      <button
-        type="button"
-        pButton
-        label="Cancelar"
-        icon="pi pi-times"
-        class="p-button-text p-button-secondary rounded-xl px-6"
-        (click)="displayModal.set(false)"
-      ></button>
-      <button
-        type="submit"
-        pButton
-        label="Guardar"
-        icon="pi pi-check"
-        class="p-button-primary rounded-xl px-8 shadow-md"
-        [disabled]="tipoForm.invalid"
-      ></button>
-    </div>
-  </form>
-</p-dialog>
-
-<!-- Notificaciones y Confirmaciones -->
 <p-toast position="top-right"></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

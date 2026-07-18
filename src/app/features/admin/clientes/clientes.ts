@@ -1,44 +1,27 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
-// PrimeNG
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { TagModule } from 'primeng/tag';
-import { SelectModule } from 'primeng/select';
-import { LucideAngularModule, Search } from 'lucide-angular';
 
 import { ClienteService } from '../../../core/services/cliente.service';
 import { CiudadService } from '../../../core/services/ciudad.service';
-
 import { Cliente } from '../../../core/models/cliente.model';
 import { Ciudad } from '../../../core/models/ciudad.model';
+import { ClienteTableComponent } from './cliente-table/cliente-table.component';
+import { ClienteDialogComponent } from './cliente-dialog/cliente-dialog.component';
 
 @Component({
   selector: 'app-clientes',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    TableModule,
     ButtonModule,
-    InputTextModule,
-    DialogModule,
+    ClienteTableComponent,
+    ClienteDialogComponent,
     ToastModule,
     ConfirmDialogModule,
-    IconFieldModule,
-    InputIconModule,
-    TagModule,
-    SelectModule,
-    LucideAngularModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './clientes.html',
@@ -46,7 +29,6 @@ import { Ciudad } from '../../../core/models/ciudad.model';
 export class ClientesComponent implements OnInit {
   private clienteService = inject(ClienteService);
   private ciudadService = inject(CiudadService);
-  private fb = inject(FormBuilder);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
 
@@ -55,22 +37,7 @@ export class ClientesComponent implements OnInit {
   displayModal = signal(false);
   isEditMode = signal(false);
   loading = signal(false);
-
-  readonly Search = Search;
-
-  clienteForm: FormGroup = this.fb.group({
-    idPersona: [null],
-    idCiudad: [null, [Validators.required]],
-    nombres: ['', [Validators.required, Validators.minLength(3)]],
-    apellidos: ['', [Validators.required, Validators.minLength(3)]],
-    cedula: ['', [Validators.required, Validators.minLength(3)]],
-    ruc: ['', [Validators.required, Validators.minLength(3)]],
-    direccion: ['', [Validators.required, Validators.minLength(3)]],
-    celular: ['', [Validators.required, Validators.minLength(3)]],
-    email: ['', [Validators.required, Validators.minLength(3)]],
-    telefono: ['', [Validators.required, Validators.minLength(3)]],
-    telefono_adicional: ['', [Validators.required, Validators.minLength(3)]],
-  });
+  selectedCliente = signal<Cliente | null>(null);
 
   ngOnInit(): void {
     this.loadClientes();
@@ -106,20 +73,20 @@ export class ClientesComponent implements OnInit {
   }
 
   showDialog(cliente?: Cliente) {
+    this.selectedCliente.set(cliente ?? null);
     this.isEditMode.set(!!cliente);
-    if (cliente) {
-      this.clienteForm.patchValue(cliente);
-    }
     this.displayModal.set(true);
   }
 
-  saveCliente() {
-    if (this.clienteForm.invalid) {
-      this.clienteForm.markAllAsTouched();
-      return;
+  onDialogVisibilityChange(visible: boolean) {
+    this.displayModal.set(visible);
+    if (!visible) {
+      this.selectedCliente.set(null);
+      this.isEditMode.set(false);
     }
+  }
 
-    const clienteData = this.clienteForm.value;
+  saveCliente(clienteData: Cliente) {
     const request = this.isEditMode()
       ? this.clienteService.update(clienteData)
       : this.clienteService.save(clienteData);
@@ -142,6 +109,12 @@ export class ClientesComponent implements OnInit {
         });
       },
     });
+  }
+
+  onDialogCancel() {
+    this.displayModal.set(false);
+    this.selectedCliente.set(null);
+    this.isEditMode.set(false);
   }
 
   confirmDelete(cliente: Cliente) {

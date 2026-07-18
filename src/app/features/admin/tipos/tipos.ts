@@ -1,45 +1,31 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TipoService } from '../../../core/services/tipo.service';
-import { Tipo } from '../../../core/models/tipo.model';
-
-// PrimeNG
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { TagModule } from 'primeng/tag';
-import { LucideAngularModule, Search } from 'lucide-angular';
+
+import { TipoService } from '../../../core/services/tipo.service';
+import { Tipo } from '../../../core/models/tipo.model';
+import { TipoTableComponent } from './tipo-table/tipo-table.component';
+import { TipoDialogComponent } from './tipo-dialog/tipo-dialog.component';
 
 @Component({
   selector: 'app-tipos',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    TableModule,
     ButtonModule,
-    InputTextModule,
-    DialogModule,
+    TipoTableComponent,
+    TipoDialogComponent,
     ToastModule,
     ConfirmDialogModule,
-    TagModule,
-    IconFieldModule,
-    InputIconModule,
-    LucideAngularModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './tipos.html',
 })
 export class TiposComponent implements OnInit {
   private tipoService = inject(TipoService);
-  private fb = inject(FormBuilder);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
 
@@ -47,13 +33,7 @@ export class TiposComponent implements OnInit {
   displayModal = signal(false);
   isEditMode = signal(false);
   loading = signal(false);
-
-  readonly Search = Search;
-
-  tipoForm: FormGroup = this.fb.group({
-    idTipo: [null],
-    tipo: ['', [Validators.required, Validators.minLength(3)]],
-  });
+  selectedTipo = signal<Tipo | null>(null);
 
   ngOnInit(): void {
     this.loadTipos();
@@ -79,22 +59,22 @@ export class TiposComponent implements OnInit {
   }
 
   showDialog(tipo?: Tipo) {
+    this.selectedTipo.set(tipo ?? null);
     this.isEditMode.set(!!tipo);
-    if (tipo) {
-      this.tipoForm.patchValue(tipo);
-    }
     this.displayModal.set(true);
   }
 
-  saveTipo() {
-    if (this.tipoForm.invalid) {
-      this.tipoForm.markAllAsTouched();
-      return;
+  onDialogVisibilityChange(visible: boolean) {
+    this.displayModal.set(visible);
+    if (!visible) {
+      this.selectedTipo.set(null);
+      this.isEditMode.set(false);
     }
+  }
 
-    const tipoData = this.tipoForm.value;
+  saveTipo(tipoData: Tipo) {
     const request = this.isEditMode()
-      ? this.tipoService.update(tipoData.idTipo, tipoData)
+      ? this.tipoService.update(tipoData.idTipo!, tipoData)
       : this.tipoService.save(tipoData);
 
     request.subscribe({
@@ -115,6 +95,12 @@ export class TiposComponent implements OnInit {
         });
       },
     });
+  }
+
+  onDialogCancel() {
+    this.displayModal.set(false);
+    this.selectedTipo.set(null);
+    this.isEditMode.set(false);
   }
 
   confirmDelete(tipo: Tipo) {

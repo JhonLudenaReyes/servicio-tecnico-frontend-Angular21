@@ -1,0 +1,112 @@
+<div class="mb-3 flex justify-start">
+  <p-iconfield iconPosition="left">
+    <p-inputicon><lucide-angular [img]="Search" class="w-5 h-5"></lucide-angular></p-inputicon>
+    <input
+      pInputText
+      pSize="small"
+      type="text"
+      (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+      placeholder="Buscar cliente..."
+    />
+  </p-iconfield>
+</div>
+
+<p-table
+  #dt
+  [value]="clientes"
+  [loading]="loading"
+  [rows]="6"
+  [paginator]="true"
+  [responsiveLayout]="'scroll'"
+  styleClass="p-datatable-sm custom-table"
+  [globalFilterFields]="[
+    'nombres',
+    'apellidos',
+    'cedula',
+    'ruc',
+    'ciudad.ciudad',
+    'direccion',
+    'celular',
+    'email',
+  ]"
+>
+  <ng-template pTemplate="header">
+    <tr class="bg-slate-50">
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Cliente</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Cédula / RUC</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Ciudad</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Dirección</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Email</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Contactos</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs text-center">Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-cliente>
+    <tr class="hover:bg-slate-50 transition-colors">
+      <td class="px-6 py-4">
+        <div class="flex flex-col">
+          <span class="text-xs text-slate-500">{{ cliente.nombres }} {{ cliente.apellidos }}</span>
+        </div>
+      </td>
+      <td class="px-6 py-4">
+        <div class="flex flex-col">
+          <span class="font-bold text-slate-700">{{ cliente.cedula }}</span>
+          <span class="text-xs text-slate-500">{{ cliente.ruc }}</span>
+        </div>
+      </td>
+      <td class="px-6 py-4">
+        <p-tag
+          severity="info"
+          [value]="cliente.ciudad?.ciudad || 'N/A'"
+          class="rounded-full"
+        ></p-tag>
+      </td>
+      <td class="px-6 py-4">
+        <div class="flex flex-col">
+          <span class="text-xs text-slate-500">{{ cliente.direccion }}</span>
+        </div>
+      </td>
+      <td class="px-6 py-4 text-slate-600">{{ cliente.email }}</td>
+      <td class="px-6 py-4">
+        <div class="text-xs space-y-1">
+          @if (cliente.celular) {
+            <div><span class="font-semibold">Celular:</span> {{ cliente.celular }}</div>
+          }
+          @if (cliente.telefono) {
+            <div><span class="font-semibold">Teléfono:</span> {{ cliente.telefono }}</div>
+          }
+          @if (cliente.telefono_adicional) {
+            <div>
+              <span class="font-semibold">Adicional:</span> {{ cliente.telefono_adicional }}
+            </div>
+          }
+        </div>
+      </td>
+      <td class="px-6 py-4 text-center">
+        <div class="flex justify-center gap-2">
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-text p-button-warning hover:bg-amber-50"
+            (click)="onEdit(cliente)"
+            pTooltip="Editar"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-text p-button-danger hover:bg-red-50"
+            (click)="onDelete(cliente)"
+            pTooltip="Eliminar"
+          ></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="7" class="text-center py-8 text-slate-400">
+        No se encontraron clientes registrados.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

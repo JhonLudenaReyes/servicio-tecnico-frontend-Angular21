@@ -1,0 +1,53 @@
+<p-dialog
+  [header]="isEditMode ? 'Editar Ciudad' : 'Nueva Ciudad'"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="custom-dialog"
+  (onHide)="closeDialog()"
+>
+  <form [formGroup]="ciudadForm" (ngSubmit)="submit()" class="flex flex-col gap-6 mt-4">
+    <div class="flex flex-col gap-2">
+      <label for="ciudad" class="font-semibold text-slate-700">Nombre de la Ciudad</label>
+      <input
+        id="ciudad"
+        type="text"
+        pInputText
+        formControlName="ciudad"
+        class="w-full p-3 border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400"
+        placeholder="Ej. Guayaquil"
+      />
+      @if (ciudadForm.get('ciudad')?.touched && ciudadForm.get('ciudad')?.invalid) {
+        <small class="text-red-500 font-medium ml-1">
+          @if (ciudadForm.get('ciudad')?.errors?.['required']) {
+            El nombre es obligatorio.
+          }
+          @if (ciudadForm.get('ciudad')?.errors?.['minlength']) {
+            Debe tener al menos 3 caracteres.
+          }
+        </small>
+      }
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button
+        type="button"
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text p-button-secondary rounded-xl px-6"
+        (click)="closeDialog()"
+      ></button>
+      <button
+        type="submit"
+        pButton
+        label="Guardar"
+        icon="pi pi-check"
+        class="p-button-primary rounded-xl px-8 shadow-md"
+        [disabled]="ciudadForm.invalid"
+      ></button>
+    </div>
+  </form>
+</p-dialog>

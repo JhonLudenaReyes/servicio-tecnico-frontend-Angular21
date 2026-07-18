@@ -1,0 +1,93 @@
+<div class="mb-3 flex justify-start">
+  <p-iconfield iconPosition="left">
+    <p-inputicon><lucide-angular [img]="Search" class="w-5 h-5"></lucide-angular></p-inputicon>
+    <input
+      pInputText
+      pSize="small"
+      type="text"
+      (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+      placeholder="Buscar equipo..."
+    />
+  </p-iconfield>
+</div>
+
+<p-table
+  #dt
+  [value]="equipos"
+  [loading]="loading"
+  [rows]="6"
+  [paginator]="true"
+  [responsiveLayout]="'scroll'"
+  styleClass="p-datatable-sm custom-table"
+  [globalFilterFields]="[
+    'tipo.tipo',
+    'marca',
+    'modelo',
+    'serie',
+    'procesador',
+    'memoria',
+    'discoDuro',
+  ]"
+>
+  <ng-template pTemplate="header">
+    <tr class="bg-slate-50">
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Tipo</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Marca / Modelo</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Serie</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Especificaciones</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs text-center">Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-equipo>
+    <tr class="hover:bg-slate-50 transition-colors">
+      <td class="px-6 py-4">
+        <p-tag severity="info" [value]="equipo.tipo?.tipo || 'N/A'" class="rounded-full"></p-tag>
+      </td>
+      <td class="px-6 py-4">
+        <div class="flex flex-col">
+          <span class="font-bold text-slate-700">{{ equipo.marca }}</span>
+          <span class="text-xs text-slate-500">{{ equipo.modelo }}</span>
+        </div>
+      </td>
+      <td class="px-6 py-4 text-slate-600 font-mono text-sm">{{ equipo.serie }}</td>
+      <td class="px-6 py-4">
+        <div class="text-xs space-y-1">
+          @if (equipo.procesador) {
+            <div><span class="font-semibold">CPU:</span> {{ equipo.procesador }}</div>
+          }
+          @if (equipo.memoria) {
+            <div><span class="font-semibold">RAM:</span> {{ equipo.memoria }}</div>
+          }
+          @if (equipo.discoDuro) {
+            <div><span class="font-semibold">HDD/SSD:</span> {{ equipo.discoDuro }}</div>
+          }
+        </div>
+      </td>
+      <td class="px-6 py-4 text-center">
+        <div class="flex justify-center gap-2">
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-text p-button-warning hover:bg-amber-50"
+            (click)="onEdit(equipo)"
+            pTooltip="Editar"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-text p-button-danger hover:bg-red-50"
+            (click)="onDelete(equipo)"
+            pTooltip="Eliminar"
+          ></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5" class="text-center py-8 text-slate-400">
+        No se encontraron equipos registrados.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

@@ -1,45 +1,31 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CiudadService } from '../../../core/services/ciudad.service';
-import { Ciudad } from '../../../core/models/ciudad.model';
-
-// PrimeNG
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { TagModule } from 'primeng/tag';
-import { LucideAngularModule, Search } from 'lucide-angular';
+
+import { CiudadService } from '../../../core/services/ciudad.service';
+import { Ciudad } from '../../../core/models/ciudad.model';
+import { CiudadTableComponent } from './ciudad-table.component';
+import { CiudadDialogComponent } from './ciudad-dialog.component';
 
 @Component({
   selector: 'app-ciudades',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    TableModule,
     ButtonModule,
-    InputTextModule,
-    DialogModule,
+    CiudadTableComponent,
+    CiudadDialogComponent,
     ToastModule,
     ConfirmDialogModule,
-    IconFieldModule,
-    InputIconModule,
-    TagModule,
-    LucideAngularModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './ciudades.html',
 })
 export class CiudadesComponent implements OnInit {
   private ciudadService = inject(CiudadService);
-  private fb = inject(FormBuilder);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
 
@@ -47,13 +33,7 @@ export class CiudadesComponent implements OnInit {
   displayModal = signal(false);
   isEditMode = signal(false);
   loading = signal(false);
-
-  readonly Search = Search;
-
-  ciudadForm: FormGroup = this.fb.group({
-    idCiudad: [null],
-    ciudad: ['', [Validators.required, Validators.minLength(3)]],
-  });
+  selectedCiudad = signal<Ciudad | null>(null);
 
   ngOnInit(): void {
     this.loadCiudades();
@@ -79,22 +59,22 @@ export class CiudadesComponent implements OnInit {
   }
 
   showDialog(ciudad?: Ciudad) {
+    this.selectedCiudad.set(ciudad ?? null);
     this.isEditMode.set(!!ciudad);
-    if (ciudad) {
-      this.ciudadForm.patchValue(ciudad);
-    }
     this.displayModal.set(true);
   }
 
-  saveCiudad() {
-    if (this.ciudadForm.invalid) {
-      this.ciudadForm.markAllAsTouched();
-      return;
+  onDialogVisibilityChange(visible: boolean) {
+    this.displayModal.set(visible);
+    if (!visible) {
+      this.selectedCiudad.set(null);
+      this.isEditMode.set(false);
     }
+  }
 
-    const ciudadData = this.ciudadForm.value;
+  saveCiudad(ciudadData: Ciudad) {
     const request = this.isEditMode()
-      ? this.ciudadService.update(ciudadData.idCiudad, ciudadData)
+      ? this.ciudadService.update(ciudadData.idCiudad!, ciudadData)
       : this.ciudadService.save(ciudadData);
 
     request.subscribe({
@@ -115,6 +95,12 @@ export class CiudadesComponent implements OnInit {
         });
       },
     });
+  }
+
+  onDialogCancel() {
+    this.displayModal.set(false);
+    this.selectedCiudad.set(null);
+    this.isEditMode.set(false);
   }
 
   confirmDelete(ciudad: Ciudad) {

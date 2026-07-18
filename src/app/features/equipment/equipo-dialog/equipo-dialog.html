@@ -1,0 +1,141 @@
+<p-dialog
+  [header]="isEditMode ? 'Editar Equipo' : 'Nuevo Equipo'"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '700px' }"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="custom-dialog"
+  (onHide)="closeDialog()"
+>
+  <form [formGroup]="equipoForm" (ngSubmit)="submit()" class="mt-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="col-span-full border-b border-slate-100 pb-2 mb-2">
+        <h3 class="text-sm font-bold text-primary-600 uppercase tracking-wider">
+          Información General
+        </h3>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="font-semibold text-slate-700">Tipo de Equipo</label>
+        <p-select
+          [options]="tipos"
+          formControlName="idTipo"
+          optionLabel="tipo"
+          optionValue="idTipo"
+          placeholder="Seleccione un tipo"
+          styleClass="w-full rounded-xl border-slate-200"
+        ></p-select>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="serie" class="font-semibold text-slate-700">Número de Serie</label>
+        <input
+          id="serie"
+          type="text"
+          pInputText
+          formControlName="serie"
+          class="w-full p-3 border-slate-200 rounded-xl"
+          placeholder="S/N: 12345ABC"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="marca" class="font-semibold text-slate-700">Marca</label>
+        <input
+          id="marca"
+          type="text"
+          pInputText
+          formControlName="marca"
+          class="w-full p-3 border-slate-200 rounded-xl"
+          placeholder="Ej. HP, Dell, Lenovo"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="modelo" class="font-semibold text-slate-700">Modelo</label>
+        <input
+          id="modelo"
+          type="text"
+          pInputText
+          formControlName="modelo"
+          class="w-full p-3 border-slate-200 rounded-xl"
+          placeholder="Ej. Pavilion, Latitude, ThinkPad"
+        />
+      </div>
+
+      <div class="col-span-full border-b border-slate-100 pb-2 mt-4 mb-2">
+        <h3 class="text-sm font-bold text-primary-600 uppercase tracking-wider">
+          Especificaciones Técnicas (Opcional)
+        </h3>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="procesador" class="font-semibold text-slate-700 text-sm">Procesador</label>
+        <input
+          id="procesador"
+          type="text"
+          pInputText
+          formControlName="procesador"
+          class="w-full p-2 text-sm border-slate-200 rounded-xl"
+          placeholder="Ej. Core i7 12th Gen"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="memoria" class="font-semibold text-slate-700 text-sm">Memoria RAM</label>
+        <input
+          id="memoria"
+          type="text"
+          pInputText
+          formControlName="memoria"
+          class="w-full p-2 text-sm border-slate-200 rounded-xl"
+          placeholder="Ej. 16GB DDR4"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="discoDuro" class="font-semibold text-slate-700 text-sm">Disco Duro</label>
+        <input
+          id="discoDuro"
+          type="text"
+          pInputText
+          formControlName="discoDuro"
+          class="w-full p-2 text-sm border-slate-200 rounded-xl"
+          placeholder="Ej. SSD 512GB NVMe"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="mainboard" class="font-semibold text-slate-700 text-sm">Mainboard</label>
+        <input
+          id="mainboard"
+          type="text"
+          pInputText
+          formControlName="mainboard"
+          class="w-full p-2 text-sm border-slate-200 rounded-xl"
+          placeholder="Ej. ASUS Prime Z690"
+        />
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-8">
+      <button
+        type="button"
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text p-button-secondary rounded-xl px-6"
+        (click)="closeDialog()"
+      ></button>
+      <button
+        type="submit"
+        pButton
+        label="Guardar Equipo"
+        icon="pi pi-check"
+        class="p-button-primary rounded-xl px-8 shadow-md"
+        [disabled]="equipoForm.invalid"
+      ></button>
+    </div>
+  </form>
+</p-dialog>

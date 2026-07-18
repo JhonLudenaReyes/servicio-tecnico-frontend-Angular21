@@ -1,0 +1,62 @@
+<div class="mb-3 flex justify-start">
+  <p-iconfield iconPosition="left">
+    <p-inputicon><lucide-angular [img]="Search" class="w-5 h-5"></lucide-angular></p-inputicon>
+    <input
+      pInputText
+      pSize="small"
+      type="text"
+      (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+      placeholder="Buscar ciudad..."
+    />
+  </p-iconfield>
+</div>
+
+<p-table
+  #dt
+  [value]="ciudades"
+  [loading]="loading"
+  [rows]="6"
+  [paginator]="true"
+  [responsiveLayout]="'scroll'"
+  styleClass="p-datatable-sm custom-table"
+  [globalFilterFields]="['ciudad', 'idCiudad']"
+>
+  <ng-template pTemplate="header">
+    <tr class="bg-slate-50">
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">ID</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs">Ciudad</th>
+      <th class="px-6 py-4 text-slate-600 font-semibold uppercase text-xs text-center">Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-ciudad>
+    <tr class="hover:bg-slate-50 transition-colors">
+      <td class="px-6 py-4 font-medium text-slate-700">{{ ciudad.idCiudad }}</td>
+      <td class="px-6 py-4 text-slate-600">{{ ciudad.ciudad }}</td>
+      <td class="px-6 py-4 text-center">
+        <div class="flex justify-center gap-2">
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-text p-button-warning hover:bg-amber-50"
+            (click)="onEdit(ciudad)"
+            pTooltip="Editar"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-text p-button-danger hover:bg-red-50"
+            (click)="onDelete(ciudad)"
+            pTooltip="Eliminar"
+          ></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="4" class="text-center py-8 text-slate-400">
+        No se encontraron ciudades registradas.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
